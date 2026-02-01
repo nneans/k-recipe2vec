@@ -637,12 +637,11 @@ function App() {
     <Container>
       <Header onClick={resetAll}>
         <Title>
-          <Github size={36} color="#24292e" style={{ marginRight: '10px' }} />
           <span style={{ color: '#24292e', fontWeight: '800' }}>
             K-Recipe2Vec
           </span>
         </Title>
-        <Subtitle>GitHub 기반 AI 레시피 대체 서비스</Subtitle>
+        <Subtitle>Data-Driven Ingredient Substitution for Korean Cuisine</Subtitle>
       </Header>
 
       <AnimatePresence mode="wait">
