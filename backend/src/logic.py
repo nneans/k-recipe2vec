@@ -8,6 +8,7 @@ import pickle
 from datetime import datetime, timedelta, timezone
 from supabase import create_client
 import re
+import os
 from collections import Counter
 
 # ==========================================
@@ -243,18 +244,22 @@ def load_resources():
     global method_map, recipes_by_ingredient, ing_method_counts, ing_cat_counts, total_method_counts, total_cat_counts, TOTAL_RECIPES
     
     print("Loading resources... (This may take a while)")
+    
+    # 기준 경로 설정 (현재 파일 위치 logic.py 기준 상위 폴더)
+    base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
     # mmap='r' 옵션으로 메모리 사용량 최소화 (디스크에서 직접 읽음)
-    w2v_model = Word2Vec.load("models/w2v.model", mmap='r')
-    d2v_model = Doc2Vec.load("models/d2v.model", mmap='r')
-    df_temp = pd.read_csv("data/final_recipe_data.csv")
+    w2v_model = Word2Vec.load(os.path.join(base_dir, "models/w2v.model"), mmap='r')
+    d2v_model = Doc2Vec.load(os.path.join(base_dir, "models/d2v.model"), mmap='r')
+    df_temp = pd.read_csv(os.path.join(base_dir, "data/final_recipe_data.csv"))
     df_temp['재료토큰'] = df_temp['재료토큰'].apply(literal_eval)
     df = df_temp # Assign to global
     
-    with open("data/stats.pkl", "rb") as f:
+    with open(os.path.join(base_dir, "data/stats.pkl"), "rb") as f:
         stats = pickle.load(f)
         
     try:
-        price_df = pd.read_csv("data/price_rank.csv", encoding='utf-8-sig')
+        price_df = pd.read_csv(os.path.join(base_dir, "data/price_rank.csv"), encoding='utf-8-sig')
         price_df.columns = price_df.columns.str.strip()
         price_map = dict(zip(price_df['ingredient'], price_df['rank']))
     except:
