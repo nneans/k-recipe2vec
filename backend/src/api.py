@@ -16,9 +16,17 @@ import logic
 app = FastAPI(title="K-Recipe2Vec API")
 
 # CORS 설정
+# CORS 설정 (보안 강화: 배포된 도메인만 허용, localhost 차단)
+origins = [
+    "https://nneans.github.io",
+    "https://k-recipe2vec.vercel.app",
+    "https://huggingface.co",
+    "https://nneans-k-recipe2vec.hf.space"
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
