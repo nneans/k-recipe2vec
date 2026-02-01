@@ -7,7 +7,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "predeploy": "npm run build",
+    "build:gh": "VITE_API_URL=https://nneans-k-recipe2vec.hf.space vite build --base=/k-recipe2vec/",
+    "predeploy": "npm run build:gh",
     "deploy": "gh-pages -d dist",
     "lint": "eslint .",
     "preview": "vite preview"

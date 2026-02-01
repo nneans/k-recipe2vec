@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
 import { searchRecipes, listRecipes, recommendDbSingle, recommendDbMulti } from './services/api'
-import { Search, ChefHat, ArrowLeft, Utensils, Sparkles, SlidersHorizontal, HelpCircle, Zap, BookOpen, ChevronDown, ChevronUp, Check, X, Home } from 'lucide-react'
+import { Search, Github, ArrowLeft, Utensils, Sparkles, SlidersHorizontal, HelpCircle, Zap, BookOpen, ChevronDown, ChevronUp, Check, X, Home } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // =========================
@@ -636,8 +636,13 @@ function App() {
   return (
     <Container>
       <Header onClick={resetAll}>
-        <Title><ChefHat size={32} color="#3b82f6" /> K-Recipe2Vec</Title>
-        <Subtitle>AI가 추천하는 최적의 대체 재료</Subtitle>
+        <Title>
+          <Github size={36} color="#24292e" style={{ marginRight: '10px' }} />
+          <span style={{ color: '#24292e', fontWeight: '800' }}>
+            K-Recipe2Vec
+          </span>
+        </Title>
+        <Subtitle>GitHub 기반 AI 레시피 대체 서비스</Subtitle>
       </Header>
 
       <AnimatePresence mode="wait">
