@@ -61,12 +61,31 @@ def get_stopwords():
             _stopwords_cache = set()
     return _stopwords_cache
 
+# 긴급 필터링을 위한 수동 불용어 목록
+MANUAL_STOPWORDS = {
+    "썰은", "쪽파나", "등", "약간", "적당량", "반개", "한개", "두개", 
+    "개", "마리", "장", "모두", "다진", "채썬", "갈은", "물", "소금", 
+    "참기름", "식용유", "후추"
+}
+
 def filter_ingredients(ingredients_list):
-    """재료 목록에서 불용어 제거"""
+    """재료 목록에서 불용어(DB + 수동) 제거"""
     stopwords = get_stopwords()
-    if not stopwords:
-        return ingredients_list
-    return [ing for ing in ingredients_list if ing not in stopwords]
+    
+    # 1. DB 불용어 필터링
+    filtered = ingredients_list
+    if stopwords:
+        filtered = [ing for ing in filtered if ing not in stopwords]
+    
+    # 2. 수동 불용어 필터링 (긴급 조치)
+    final_list = []
+    for ing in filtered:
+        # 정확히 일치하거나, 수동 불용어가 포함된 경우(선택적) 제외
+        # 여기서는 정확히 일치하는 경우만 제거 (혹은 '쪽파나' 처럼 끝에 조사가 붙은 경우도 고려 가능하지만 보수적으로 접근)
+        if ing not in MANUAL_STOPWORDS:
+            final_list.append(ing)
+            
+    return final_list
 
 # --- Endpoints ---
 

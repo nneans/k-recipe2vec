@@ -642,6 +642,9 @@ function App() {
           </span>
         </Title>
         <Subtitle>Data-Driven Ingredient Substitution for Korean Cuisine</Subtitle>
+        <div style={{ fontSize: '0.75rem', color: '#94a3b8', marginTop: '0.5rem', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          Data Provided by <span style={{ fontWeight: '600', color: '#64748b' }}>(주)웨이브앤바이브</span>
+        </div>
       </Header>
 
       <AnimatePresence mode="wait">
@@ -685,6 +688,12 @@ function App() {
                     <p style={{ marginTop: '0.8rem' }}>
                       ⚙️ <strong>고급 설정</strong>에서 각 점수의 가중치를 조절하여 원하는 방향으로 추천 결과를 커스터마이즈할 수 있습니다.
                     </p>
+
+                    <InfoBox style={{ marginTop: '0.8rem', background: '#fff1f2', borderLeft: '4px solid #f43f5e', color: '#881337' }}>
+                      <strong>⚠️ 데이터 한계 안내</strong><br />
+                      본 모델은 레시피 원문 데이터를 그대로 학습하였기에, '썰은', '다진', '쪽파나' 등 재료명이 아닌 수식어가 포함될 수 있습니다.
+                      지속적으로 필터링을 개선하고 있으니 양해 부탁드립니다.
+                    </InfoBox>
                   </div>
                 </motion.div>
               )}
@@ -778,404 +787,409 @@ function App() {
               )}
             </Card>
           </motion.div>
-        )}
+        )
+        }
 
         {/* ========== 재료 선택 단계 ========== */}
-        {step === 'detail' && selectedRecipe && (
-          <motion.div
-            key="detail"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-          >
-            <Card>
-              <NavButtons>
-                <BackButton onClick={goBack}>
-                  <ArrowLeft size={16} /> 뒤로
-                </BackButton>
-                <HomeButton onClick={resetAll}>
-                  <Home size={16} /> 홈으로
-                </HomeButton>
-              </NavButtons>
+        {
+          step === 'detail' && selectedRecipe && (
+            <motion.div
+              key="detail"
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -20 }}
+            >
+              <Card>
+                <NavButtons>
+                  <BackButton onClick={goBack}>
+                    <ArrowLeft size={16} /> 뒤로
+                  </BackButton>
+                  <HomeButton onClick={resetAll}>
+                    <Home size={16} /> 홈으로
+                  </HomeButton>
+                </NavButtons>
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.3rem' }}>
-                <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#1e293b' }}>
-                  {selectedRecipe.name}
-                </h2>
-                <RecipeId>#{selectedRecipe.id}</RecipeId>
-              </div>
-              <p style={{ color: '#64748b', margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
-                대체할 재료를 선택하세요 (여러 개 선택 가능)
-              </p>
-
-              <IngredientGrid>
-                {selectedRecipe.ingredients.map((ing, idx) => (
-                  <IngredientChip
-                    key={idx}
-                    selected={selectedIngs.includes(ing)}
-                    onClick={() => toggleIngredient(ing)}
-                  >
-                    {selectedIngs.includes(ing) && <Check size={14} />}
-                    {ing}
-                  </IngredientChip>
-                ))}
-              </IngredientGrid>
-
-              {selectedIngs.length > 0 && (
-                <div style={{ marginTop: '1rem', padding: '0.8rem', background: '#f8fafc', borderRadius: '10px' }}>
-                  <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
-                    선택된 재료 ({selectedIngs.length}개):
-                  </div>
-                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
-                    {selectedIngs.map((ing, idx) => (
-                      <span
-                        key={idx}
-                        style={{
-                          background: '#3b82f6',
-                          color: 'white',
-                          padding: '0.3rem 0.6rem',
-                          borderRadius: '999px',
-                          fontSize: '0.85rem',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '4px',
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => toggleIngredient(ing)}
-                      >
-                        {ing} <X size={12} />
-                      </span>
-                    ))}
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '0.3rem' }}>
+                  <h2 style={{ margin: 0, fontSize: '1.5rem', color: '#1e293b' }}>
+                    {selectedRecipe.name}
+                  </h2>
+                  <RecipeId>#{selectedRecipe.id}</RecipeId>
                 </div>
-              )}
+                <p style={{ color: '#64748b', margin: '0 0 0.5rem 0', fontSize: '0.9rem' }}>
+                  대체할 재료를 선택하세요 (여러 개 선택 가능)
+                </p>
 
-              {/* 가중치 설정 */}
-              <SliderContainer>
-                <ToggleHeader onClick={() => setShowWeights(!showWeights)}>
-                  <SectionTitle style={{ margin: 0 }}>
-                    <SlidersHorizontal size={14} /> 고급 설정 (가중치 조절)
-                  </SectionTitle>
-                  {showWeights ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                </ToggleHeader>
+                <IngredientGrid>
+                  {selectedRecipe.ingredients.map((ing, idx) => (
+                    <IngredientChip
+                      key={idx}
+                      selected={selectedIngs.includes(ing)}
+                      onClick={() => toggleIngredient(ing)}
+                    >
+                      {selectedIngs.includes(ing) && <Check size={14} />}
+                      {ing}
+                    </IngredientChip>
+                  ))}
+                </IngredientGrid>
 
-                {showWeights && (
-                  <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    style={{ marginTop: '0.8rem' }}
-                  >
-                    <SliderRow>
-                      <SliderLabel>
-                        <Tooltip>
-                          <HelpCircle size={12} />
-                          <TooltipContent>재료 간 의미적 유사도</TooltipContent>
-                        </Tooltip>
-                        재료 유사도
-                      </SliderLabel>
-                      <Slider
-                        type="range" min="0" max="1" step="0.1"
-                        value={weights.w2v}
-                        onChange={e => setWeights({ ...weights, w2v: parseFloat(e.target.value) })}
-                      />
-                      <SliderValue>{weights.w2v.toFixed(1)}</SliderValue>
-                    </SliderRow>
-                    <SliderRow>
-                      <SliderLabel>
-                        <Tooltip>
-                          <HelpCircle size={12} />
-                          <TooltipContent>레시피 문맥 유사도</TooltipContent>
-                        </Tooltip>
-                        문맥 유사도
-                      </SliderLabel>
-                      <Slider
-                        type="range" min="0" max="1" step="0.1"
-                        value={weights.d2v}
-                        onChange={e => setWeights({ ...weights, d2v: parseFloat(e.target.value) })}
-                      />
-                      <SliderValue>{weights.d2v.toFixed(1)}</SliderValue>
-                    </SliderRow>
-                    <SliderRow>
-                      <SliderLabel>
-                        <Tooltip>
-                          <HelpCircle size={12} />
-                          <TooltipContent>조리 방법 적합도</TooltipContent>
-                        </Tooltip>
-                        조리법 적합
-                      </SliderLabel>
-                      <Slider
-                        type="range" min="0" max="1" step="0.1"
-                        value={weights.method}
-                        onChange={e => setWeights({ ...weights, method: parseFloat(e.target.value) })}
-                      />
-                      <SliderValue>{weights.method.toFixed(1)}</SliderValue>
-                    </SliderRow>
-                    <SliderRow>
-                      <SliderLabel>
-                        <Tooltip>
-                          <HelpCircle size={12} />
-                          <TooltipContent>요리 카테고리 적합도</TooltipContent>
-                        </Tooltip>
-                        카테고리 적합
-                      </SliderLabel>
-                      <Slider
-                        type="range" min="0" max="1" step="0.1"
-                        value={weights.cat}
-                        onChange={e => setWeights({ ...weights, cat: parseFloat(e.target.value) })}
-                      />
-                      <SliderValue>{weights.cat.toFixed(1)}</SliderValue>
-                    </SliderRow>
-                  </motion.div>
+                {selectedIngs.length > 0 && (
+                  <div style={{ marginTop: '1rem', padding: '0.8rem', background: '#f8fafc', borderRadius: '10px' }}>
+                    <div style={{ fontSize: '0.85rem', color: '#64748b', marginBottom: '0.5rem' }}>
+                      선택된 재료 ({selectedIngs.length}개):
+                    </div>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.4rem' }}>
+                      {selectedIngs.map((ing, idx) => (
+                        <span
+                          key={idx}
+                          style={{
+                            background: '#3b82f6',
+                            color: 'white',
+                            padding: '0.3rem 0.6rem',
+                            borderRadius: '999px',
+                            fontSize: '0.85rem',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            cursor: 'pointer'
+                          }}
+                          onClick={() => toggleIngredient(ing)}
+                        >
+                          {ing} <X size={12} />
+                        </span>
+                      ))}
+                    </div>
+                  </div>
                 )}
-              </SliderContainer>
 
-              <ActionButton onClick={handleRecommend} disabled={selectedIngs.length === 0 || loading}>
-                {loading ? (
-                  <LoadingText>분석 중...</LoadingText>
-                ) : (
-                  <>
-                    <Zap size={16} />
-                    {selectedIngs.length > 0
-                      ? `${selectedIngs.length}개 재료 대체 추천받기`
-                      : '재료를 선택해주세요'}
-                  </>
-                )}
-              </ActionButton>
-            </Card>
-          </motion.div>
-        )}
+                {/* 가중치 설정 */}
+                <SliderContainer>
+                  <ToggleHeader onClick={() => setShowWeights(!showWeights)}>
+                    <SectionTitle style={{ margin: 0 }}>
+                      <SlidersHorizontal size={14} /> 고급 설정 (가중치 조절)
+                    </SectionTitle>
+                    {showWeights ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </ToggleHeader>
+
+                  {showWeights && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      style={{ marginTop: '0.8rem' }}
+                    >
+                      <SliderRow>
+                        <SliderLabel>
+                          <Tooltip>
+                            <HelpCircle size={12} />
+                            <TooltipContent>재료 간 의미적 유사도</TooltipContent>
+                          </Tooltip>
+                          재료 유사도
+                        </SliderLabel>
+                        <Slider
+                          type="range" min="0" max="1" step="0.1"
+                          value={weights.w2v}
+                          onChange={e => setWeights({ ...weights, w2v: parseFloat(e.target.value) })}
+                        />
+                        <SliderValue>{weights.w2v.toFixed(1)}</SliderValue>
+                      </SliderRow>
+                      <SliderRow>
+                        <SliderLabel>
+                          <Tooltip>
+                            <HelpCircle size={12} />
+                            <TooltipContent>레시피 문맥 유사도</TooltipContent>
+                          </Tooltip>
+                          문맥 유사도
+                        </SliderLabel>
+                        <Slider
+                          type="range" min="0" max="1" step="0.1"
+                          value={weights.d2v}
+                          onChange={e => setWeights({ ...weights, d2v: parseFloat(e.target.value) })}
+                        />
+                        <SliderValue>{weights.d2v.toFixed(1)}</SliderValue>
+                      </SliderRow>
+                      <SliderRow>
+                        <SliderLabel>
+                          <Tooltip>
+                            <HelpCircle size={12} />
+                            <TooltipContent>조리 방법 적합도</TooltipContent>
+                          </Tooltip>
+                          조리법 적합
+                        </SliderLabel>
+                        <Slider
+                          type="range" min="0" max="1" step="0.1"
+                          value={weights.method}
+                          onChange={e => setWeights({ ...weights, method: parseFloat(e.target.value) })}
+                        />
+                        <SliderValue>{weights.method.toFixed(1)}</SliderValue>
+                      </SliderRow>
+                      <SliderRow>
+                        <SliderLabel>
+                          <Tooltip>
+                            <HelpCircle size={12} />
+                            <TooltipContent>요리 카테고리 적합도</TooltipContent>
+                          </Tooltip>
+                          카테고리 적합
+                        </SliderLabel>
+                        <Slider
+                          type="range" min="0" max="1" step="0.1"
+                          value={weights.cat}
+                          onChange={e => setWeights({ ...weights, cat: parseFloat(e.target.value) })}
+                        />
+                        <SliderValue>{weights.cat.toFixed(1)}</SliderValue>
+                      </SliderRow>
+                    </motion.div>
+                  )}
+                </SliderContainer>
+
+                <ActionButton onClick={handleRecommend} disabled={selectedIngs.length === 0 || loading}>
+                  {loading ? (
+                    <LoadingText>분석 중...</LoadingText>
+                  ) : (
+                    <>
+                      <Zap size={16} />
+                      {selectedIngs.length > 0
+                        ? `${selectedIngs.length}개 재료 대체 추천받기`
+                        : '재료를 선택해주세요'}
+                    </>
+                  )}
+                </ActionButton>
+              </Card>
+            </motion.div>
+          )
+        }
 
         {/* ========== 결과 단계 ========== */}
-        {step === 'result' && (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-          >
-            <Card>
-              <NavButtons>
-                <BackButton onClick={goBack}>
-                  <ArrowLeft size={16} /> 뒤로
-                </BackButton>
-                <HomeButton onClick={resetAll}>
-                  <Home size={16} /> 홈으로
-                </HomeButton>
-              </NavButtons>
+        {
+          step === 'result' && (
+            <motion.div
+              key="result"
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+            >
+              <Card>
+                <NavButtons>
+                  <BackButton onClick={goBack}>
+                    <ArrowLeft size={16} /> 뒤로
+                  </BackButton>
+                  <HomeButton onClick={resetAll}>
+                    <Home size={16} /> 홈으로
+                  </HomeButton>
+                </NavButtons>
 
-              <h2 style={{ fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 0.3rem 0' }}>
-                <Sparkles color="#eab308" fill="#eab308" size={20} /> 이런 재료로 대체해보세요
-              </h2>
-              <p style={{ color: '#64748b', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>
-                <strong>{selectedRecipe.name}</strong> (#{selectedRecipe.id})
-              </p>
+                <h2 style={{ fontSize: '1.4rem', display: 'flex', alignItems: 'center', gap: '8px', margin: '0 0 0.3rem 0' }}>
+                  <Sparkles color="#eab308" fill="#eab308" size={20} /> 이런 재료로 대체해보세요
+                </h2>
+                <p style={{ color: '#64748b', margin: '0 0 1rem 0', fontSize: '0.9rem' }}>
+                  <strong>{selectedRecipe.name}</strong> (#{selectedRecipe.id})
+                </p>
 
-              {/* 단일 재료 결과 - 그리드 레이아웃 */}
-              {recommendations.length > 0 && (
-                <>
-                  <TargetLabel>
-                    "{selectedIngs[0]}" → {expandedCard !== null && recommendations[expandedCard]
-                      ? <span style={{ color: '#3b82f6', fontWeight: '600' }}>{recommendations[expandedCard]['대체재료']}</span>
-                      : '대체 추천'}
-                  </TargetLabel>
-                  <ResultGrid>
-                    {recommendations.map((rec, idx) => (
-                      <CompactResultCard
-                        key={idx}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.05 }}
-                        onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
-                      >
-                        <CompactHeader>
-                          <ResultName>
-                            <MedalIcon>
-                              {idx === 0 && '🥇'}
-                              {idx === 1 && '🥈'}
-                              {idx === 2 && '🥉'}
-                              {idx > 2 && `${idx + 1}.`}
-                            </MedalIcon>
-                            {rec['대체재료']}
-                          </ResultName>
-                          <ScoreBadge>{(rec['최종점수'] * 100).toFixed(0)}점</ScoreBadge>
-                        </CompactHeader>
+                {/* 단일 재료 결과 - 그리드 레이아웃 */}
+                {recommendations.length > 0 && (
+                  <>
+                    <TargetLabel>
+                      "{selectedIngs[0]}" → {expandedCard !== null && recommendations[expandedCard]
+                        ? <span style={{ color: '#3b82f6', fontWeight: '600' }}>{recommendations[expandedCard]['대체재료']}</span>
+                        : '대체 추천'}
+                    </TargetLabel>
+                    <ResultGrid>
+                      {recommendations.map((rec, idx) => (
+                        <CompactResultCard
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.05 }}
+                          onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
+                        >
+                          <CompactHeader>
+                            <ResultName>
+                              <MedalIcon>
+                                {idx === 0 && '🥇'}
+                                {idx === 1 && '🥈'}
+                                {idx === 2 && '🥉'}
+                                {idx > 2 && `${idx + 1}.`}
+                              </MedalIcon>
+                              {rec['대체재료']}
+                            </ResultName>
+                            <ScoreBadge>{(rec['최종점수'] * 100).toFixed(0)}점</ScoreBadge>
+                          </CompactHeader>
 
-                        <ScoreBarMini>
-                          <ScoreSegment color="#3b82f6" value={rec['W2V'] || 0} title="W2V" />
-                          <ScoreSegment color="#8b5cf6" value={rec['D2V'] || 0} title="D2V" />
-                          <ScoreSegment color="#10b981" value={rec['Method'] || 0} title="Method" />
-                          <ScoreSegment color="#f59e0b" value={rec['Category'] || 0} title="Category" />
-                        </ScoreBarMini>
+                          <ScoreBarMini>
+                            <ScoreSegment color="#3b82f6" value={rec['W2V'] || 0} title="W2V" />
+                            <ScoreSegment color="#8b5cf6" value={rec['D2V'] || 0} title="D2V" />
+                            <ScoreSegment color="#10b981" value={rec['Method'] || 0} title="Method" />
+                            <ScoreSegment color="#f59e0b" value={rec['Category'] || 0} title="Category" />
+                          </ScoreBarMini>
 
-                        {expandedCard === idx && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            style={{ marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid #e2e8f0' }}
-                          >
-                            <ScoreRow>
-                              <ScoreLabel>재료 유사도</ScoreLabel>
-                              <ProgressBar><ProgressFill value={(rec['W2V'] || 0) * 100} color="#3b82f6" /></ProgressBar>
-                              <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
-                                {((rec['W2V'] || 0) * 100).toFixed(0)}%
+                          {expandedCard === idx && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
+                              style={{ marginTop: '0.8rem', paddingTop: '0.8rem', borderTop: '1px solid #e2e8f0' }}
+                            >
+                              <ScoreRow>
+                                <ScoreLabel>재료 유사도</ScoreLabel>
+                                <ProgressBar><ProgressFill value={(rec['W2V'] || 0) * 100} color="#3b82f6" /></ProgressBar>
+                                <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
+                                  {((rec['W2V'] || 0) * 100).toFixed(0)}%
+                                </span>
+                              </ScoreRow>
+                              <ScoreRow>
+                                <ScoreLabel>문맥 유사도</ScoreLabel>
+                                <ProgressBar><ProgressFill value={(rec['D2V'] || 0) * 100} color="#8b5cf6" /></ProgressBar>
+                                <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
+                                  {((rec['D2V'] || 0) * 100).toFixed(0)}%
+                                </span>
+                              </ScoreRow>
+                              <ScoreRow>
+                                <ScoreLabel>조리법 적합</ScoreLabel>
+                                <ProgressBar><ProgressFill value={(rec['Method'] || 0) * 100} color="#10b981" /></ProgressBar>
+                                <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
+                                  {((rec['Method'] || 0) * 100).toFixed(0)}%
+                                </span>
+                              </ScoreRow>
+                              <ScoreRow>
+                                <ScoreLabel>카테고리 적합</ScoreLabel>
+                                <ProgressBar><ProgressFill value={(rec['Category'] || 0) * 100} color="#f59e0b" /></ProgressBar>
+                                <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
+                                  {((rec['Category'] || 0) * 100).toFixed(0)}%
+                                </span>
+                              </ScoreRow>
+                            </motion.div>
+                          )}
+                        </CompactResultCard>
+                      ))}
+                    </ResultGrid>
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.8rem', textAlign: 'center' }}>
+                      카드를 클릭하면 상세 점수를 확인할 수 있어요
+                    </p>
+                  </>
+                )}
+
+                {/* 다중 재료 결과 - Beam Search 조합 표시 */}
+                {multiRecommendations.length > 0 && (
+                  <>
+                    <TargetLabel>
+                      {selectedIngs.join(' + ')} → {expandedCard !== null && multiRecommendations[expandedCard]
+                        ? <span style={{ color: '#3b82f6', fontWeight: '600' }}>
+                          {multiRecommendations[expandedCard].substitutes.join(' + ')}
+                        </span>
+                        : '최적 대체 조합'}
+                    </TargetLabel>
+
+                    <div style={{ marginBottom: '1rem' }}>
+                      {multiRecommendations.map((combo, idx) => (
+                        <CompactResultCard
+                          key={idx}
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          style={{
+                            marginBottom: '0.8rem',
+                            border: expandedCard === idx ? '2px solid #3b82f6' : '1px solid #e2e8f0'
+                          }}
+                          onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
+                        >
+                          <CompactHeader>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                              <MedalIcon>
+                                {idx === 0 && '🥇'}
+                                {idx === 1 && '🥈'}
+                                {idx === 2 && '🥉'}
+                              </MedalIcon>
+                              <span style={{ fontWeight: '600', color: '#1e293b' }}>
+                                조합 {idx + 1}
                               </span>
-                            </ScoreRow>
-                            <ScoreRow>
-                              <ScoreLabel>문맥 유사도</ScoreLabel>
-                              <ProgressBar><ProgressFill value={(rec['D2V'] || 0) * 100} color="#8b5cf6" /></ProgressBar>
-                              <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
-                                {((rec['D2V'] || 0) * 100).toFixed(0)}%
-                              </span>
-                            </ScoreRow>
-                            <ScoreRow>
-                              <ScoreLabel>조리법 적합</ScoreLabel>
-                              <ProgressBar><ProgressFill value={(rec['Method'] || 0) * 100} color="#10b981" /></ProgressBar>
-                              <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
-                                {((rec['Method'] || 0) * 100).toFixed(0)}%
-                              </span>
-                            </ScoreRow>
-                            <ScoreRow>
-                              <ScoreLabel>카테고리 적합</ScoreLabel>
-                              <ProgressBar><ProgressFill value={(rec['Category'] || 0) * 100} color="#f59e0b" /></ProgressBar>
-                              <span style={{ minWidth: '30px', textAlign: 'right', fontSize: '0.75rem', color: '#64748b' }}>
-                                {((rec['Category'] || 0) * 100).toFixed(0)}%
-                              </span>
-                            </ScoreRow>
-                          </motion.div>
-                        )}
-                      </CompactResultCard>
-                    ))}
-                  </ResultGrid>
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8', marginTop: '0.8rem', textAlign: 'center' }}>
-                    카드를 클릭하면 상세 점수를 확인할 수 있어요
-                  </p>
-                </>
-              )}
+                            </div>
+                            <ScoreBadge>{(combo.score * 100).toFixed(0)}점</ScoreBadge>
+                          </CompactHeader>
 
-              {/* 다중 재료 결과 - Beam Search 조합 표시 */}
-              {multiRecommendations.length > 0 && (
-                <>
-                  <TargetLabel>
-                    {selectedIngs.join(' + ')} → {expandedCard !== null && multiRecommendations[expandedCard]
-                      ? <span style={{ color: '#3b82f6', fontWeight: '600' }}>
-                        {multiRecommendations[expandedCard].substitutes.join(' + ')}
-                      </span>
-                      : '최적 대체 조합'}
-                  </TargetLabel>
-
-                  <div style={{ marginBottom: '1rem' }}>
-                    {multiRecommendations.map((combo, idx) => (
-                      <CompactResultCard
-                        key={idx}
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: idx * 0.1 }}
-                        style={{
-                          marginBottom: '0.8rem',
-                          border: expandedCard === idx ? '2px solid #3b82f6' : '1px solid #e2e8f0'
-                        }}
-                        onClick={() => setExpandedCard(expandedCard === idx ? null : idx)}
-                      >
-                        <CompactHeader>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <MedalIcon>
-                              {idx === 0 && '🥇'}
-                              {idx === 1 && '🥈'}
-                              {idx === 2 && '🥉'}
-                            </MedalIcon>
-                            <span style={{ fontWeight: '600', color: '#1e293b' }}>
-                              조합 {idx + 1}
-                            </span>
+                          <div style={{
+                            marginTop: '0.8rem',
+                            display: 'flex',
+                            flexWrap: 'wrap',
+                            gap: '0.5rem'
+                          }}>
+                            {selectedIngs.map((origIng, i) => (
+                              <div
+                                key={i}
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  gap: '6px',
+                                  padding: '0.4rem 0.8rem',
+                                  background: expandedCard === idx ? '#dbeafe' : '#f1f5f9',
+                                  borderRadius: '8px',
+                                  fontSize: '0.9rem'
+                                }}
+                              >
+                                <span style={{ color: '#64748b', textDecoration: 'line-through' }}>
+                                  {origIng}
+                                </span>
+                                <span style={{ color: '#94a3b8' }}>→</span>
+                                <span style={{ fontWeight: '600', color: '#3b82f6' }}>
+                                  {combo.substitutes[i]}
+                                </span>
+                              </div>
+                            ))}
                           </div>
-                          <ScoreBadge>{(combo.score * 100).toFixed(0)}점</ScoreBadge>
-                        </CompactHeader>
 
-                        <div style={{
-                          marginTop: '0.8rem',
-                          display: 'flex',
-                          flexWrap: 'wrap',
-                          gap: '0.5rem'
-                        }}>
-                          {selectedIngs.map((origIng, i) => (
-                            <div
-                              key={i}
+                          {expandedCard === idx && (
+                            <motion.div
+                              initial={{ opacity: 0, height: 0 }}
+                              animate={{ opacity: 1, height: 'auto' }}
                               style={{
-                                display: 'flex',
-                                alignItems: 'center',
-                                gap: '6px',
-                                padding: '0.4rem 0.8rem',
-                                background: expandedCard === idx ? '#dbeafe' : '#f1f5f9',
-                                borderRadius: '8px',
-                                fontSize: '0.9rem'
+                                marginTop: '1rem',
+                                paddingTop: '1rem',
+                                borderTop: '1px solid #e2e8f0',
+                                fontSize: '0.85rem',
+                                color: '#475569'
                               }}
                             >
-                              <span style={{ color: '#64748b', textDecoration: 'line-through' }}>
-                                {origIng}
-                              </span>
-                              <span style={{ color: '#94a3b8' }}>→</span>
-                              <span style={{ fontWeight: '600', color: '#3b82f6' }}>
-                                {combo.substitutes[i]}
-                              </span>
-                            </div>
-                          ))}
-                        </div>
+                              <div style={{ marginBottom: '0.5rem', fontWeight: '600', color: '#1e293b' }}>
+                                추천 기준
+                              </div>
+                              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span>평균 유사도 점수</span>
+                                  <span style={{ fontWeight: '600', color: '#3b82f6' }}>{(combo.score * 100).toFixed(1)}%</span>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                                  <span>조합 순위</span>
+                                  <span style={{ fontWeight: '600' }}>{idx + 1}위 / {multiRecommendations.length}개</span>
+                                </div>
+                                <div style={{
+                                  marginTop: '0.5rem',
+                                  padding: '0.5rem',
+                                  background: '#f8fafc',
+                                  borderRadius: '6px',
+                                  fontSize: '0.8rem',
+                                  color: '#64748b'
+                                }}>
+                                  Beam Search가 각 재료의 W2V, D2V, Method, Category 점수를 종합하여 최적의 조합을 선택했습니다.
+                                </div>
+                              </div>
+                            </motion.div>
+                          )}
+                        </CompactResultCard>
+                      ))}
+                    </div>
 
-                        {expandedCard === idx && (
-                          <motion.div
-                            initial={{ opacity: 0, height: 0 }}
-                            animate={{ opacity: 1, height: 'auto' }}
-                            style={{
-                              marginTop: '1rem',
-                              paddingTop: '1rem',
-                              borderTop: '1px solid #e2e8f0',
-                              fontSize: '0.85rem',
-                              color: '#475569'
-                            }}
-                          >
-                            <div style={{ marginBottom: '0.5rem', fontWeight: '600', color: '#1e293b' }}>
-                              추천 기준
-                            </div>
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '0.4rem' }}>
-                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span>평균 유사도 점수</span>
-                                <span style={{ fontWeight: '600', color: '#3b82f6' }}>{(combo.score * 100).toFixed(1)}%</span>
-                              </div>
-                              <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span>조합 순위</span>
-                                <span style={{ fontWeight: '600' }}>{idx + 1}위 / {multiRecommendations.length}개</span>
-                              </div>
-                              <div style={{
-                                marginTop: '0.5rem',
-                                padding: '0.5rem',
-                                background: '#f8fafc',
-                                borderRadius: '6px',
-                                fontSize: '0.8rem',
-                                color: '#64748b'
-                              }}>
-                                Beam Search가 각 재료의 W2V, D2V, Method, Category 점수를 종합하여 최적의 조합을 선택했습니다.
-                              </div>
-                            </div>
-                          </motion.div>
-                        )}
-                      </CompactResultCard>
-                    ))}
+                    <p style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center' }}>
+                      카드를 클릭하면 상세 정보를 확인할 수 있어요
+                    </p>
+                  </>
+                )}
+
+                {recommendations.length === 0 && multiRecommendations.length === 0 && (
+                  <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
+                    추천 결과가 없습니다. 다른 재료를 선택해 주세요.
                   </div>
-
-                  <p style={{ fontSize: '0.8rem', color: '#94a3b8', textAlign: 'center' }}>
-                    카드를 클릭하면 상세 정보를 확인할 수 있어요
-                  </p>
-                </>
-              )}
-
-              {recommendations.length === 0 && multiRecommendations.length === 0 && (
-                <div style={{ textAlign: 'center', padding: '2rem', color: '#94a3b8' }}>
-                  추천 결과가 없습니다. 다른 재료를 선택해 주세요.
-                </div>
-              )}
-            </Card>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </Container>
+                )}
+              </Card>
+            </motion.div>
+          )
+        }
+      </AnimatePresence >
+    </Container >
   )
 }
 
