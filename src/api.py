@@ -56,6 +56,28 @@ def health_check():
     status = "loading" if logic.df is None else "ok"
     return {"status": status, "service": "K-Recipe2Vec API"}
 
+@app.get("/recipes")
+def list_recipes(limit: int = 50, offset: int = 0):
+    """전체 레시피 목록 조회 (페이지네이션)"""
+    logic.ensure_initialized()
+    
+    try:
+        total = len(logic.df)
+        subset = logic.df.iloc[offset:offset+limit][['레시피일련번호', '요리명', '재료토큰', '요리방법별명', '요리종류별명_세분화']]
+        
+        output = []
+        for _, row in subset.iterrows():
+            output.append({
+                "id": int(row['레시피일련번호']),
+                "name": row['요리명'],
+                "ingredients": row['재료토큰'],
+                "method": row['요리방법별명'],
+                "category": row['요리종류별명_세분화']
+            })
+        return {"total": total, "recipes": output}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/recipes/search")
 def search_recipes(q: str):
     """요리명으로 레시피 검색"""
