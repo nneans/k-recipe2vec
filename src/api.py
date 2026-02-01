@@ -48,6 +48,26 @@ def startup_event():
     # 백그라운드 스레드에서 모델 로딩 시작 (앱 시작을 막지 않음)
     threading.Thread(target=logic.load_resources).start()
 
+# --- 불용어 캐시 및 필터링 ---
+_stopwords_cache = None
+
+def get_stopwords():
+    """불용어 목록을 캐시하여 반환"""
+    global _stopwords_cache
+    if _stopwords_cache is None:
+        try:
+            _stopwords_cache = set(logic.load_global_stopwords())
+        except:
+            _stopwords_cache = set()
+    return _stopwords_cache
+
+def filter_ingredients(ingredients_list):
+    """재료 목록에서 불용어 제거"""
+    stopwords = get_stopwords()
+    if not stopwords:
+        return ingredients_list
+    return [ing for ing in ingredients_list if ing not in stopwords]
+
 # --- Endpoints ---
 
 @app.get("/")
@@ -70,7 +90,7 @@ def list_recipes(limit: int = 50, offset: int = 0):
             output.append({
                 "id": int(row['레시피일련번호']),
                 "name": row['요리명'],
-                "ingredients": row['재료토큰'],
+                "ingredients": filter_ingredients(row['재료토큰']),
                 "method": row['요리방법별명'],
                 "category": row['요리종류별명_세분화']
             })
@@ -93,7 +113,7 @@ def search_recipes(q: str):
             output.append({
                 "id": int(row['레시피일련번호']),
                 "name": row['요리명'],
-                "ingredients": row['재료토큰']
+                "ingredients": filter_ingredients(row['재료토큰'])
             })
         return output
     except Exception as e:
@@ -115,7 +135,7 @@ def get_recipe_detail(recipe_id: int):
             "name": row['요리명'],
             "method": row['요리방법별명'],
             "category": row['요리종류별명_세분화'],
-            "ingredients": row['재료토큰']
+            "ingredients": filter_ingredients(row['재료토큰'])
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
