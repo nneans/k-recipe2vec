@@ -1,3 +1,12 @@
+---
+title: K-Recipe2Vec API
+emoji: 🍳
+colorFrom: yellow
+colorTo: red
+sdk: docker
+pinned: false
+---
+
 # 🍳 K-Recipe2Vec
 
 AI 기반 한식 식재료 대체 추천 서비스
