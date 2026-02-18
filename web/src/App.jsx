@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import styled, { keyframes } from 'styled-components'
-import { searchRecipes, listRecipes, recommendDbSingle, recommendDbMulti } from './services/api'
+import { searchRecipes, listRecipes, recommendDbSingle, recommendDbMulti, healthCheck } from './services/api'
 import { Search, Github, ArrowLeft, Utensils, Sparkles, SlidersHorizontal, HelpCircle, Zap, BookOpen, ChevronDown, ChevronUp, Check, X, Home } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 
@@ -547,6 +547,11 @@ function App() {
   })
 
   useEffect(() => {
+    // 🚀 서버 깨우기 (Cold Start 방지)
+    healthCheck().then(() => {
+      console.log('API Server is awake');
+    });
+
     // 초기 레시피 목록 로드
     listRecipes(30, 0).then(res => {
       setAllRecipes(res.recipes || [])
